@@ -15,25 +15,71 @@ Comments and code in this file are used for describing and explaining a particul
 -->
 
 +++
-title = ""
-description = ""
+title = "Gimme a REST."
+description = "The basics of a RESTful Web API, with a tiny REST server in Go."
 author = "Christoph Berger"
 email = "chris@appliedgo.net"
-date = "2016-00-00"
-publishdate = "2016-00-00"
-domains = [""]
-tags = ["", "", ""]
+date = "2016-09-22"
+publishdate = "2016-09-22"
+domains = ["Internet and Web"]
+tags = ["REST", "Web", "API", "Video"]
 categories = ["Tutorial"]
 +++
 
-### Summary goes here
+RESTful Web API's are ubiquitous. Time for a minimalistic, five-minutes video tutorial about REST, RESTful API's, and buidling a REST server in Go.
 
 <!--more-->
 
-## Intro goes here
+- - -
+*This is the transcript of the video.*
+- - -
+
 
 ## The code
 */
 
 // ## Imports and globals
 package main
+
+import (
+	"flag"
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/julienschmidt/httprouter"
+)
+
+var (
+	addr = flag.String("addr", ":8080", "http service address")
+	data map[string]string
+)
+
+func show(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	k := p.ByName("key")
+	if k == "" {
+		fmt.Fprint(w, "Read: ", data)
+		return
+	}
+	fmt.Fprintf(w, "Read: data[%s] = %s", k, data[k])
+}
+
+func update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	k := p.ByName("key")
+	v := p.ByName("value")
+	data[k] = v
+	fmt.Fprintf(w, "Updated: data[%s] = %s", k, data[k])
+}
+
+func main() {
+	flag.Parse()
+	data = make(map[string]string)
+	r := httprouter.New()
+	r.GET("/data/:key", show)
+	r.GET("/alldata", show)
+	r.PUT("/data/:key/:value", update)
+	err := http.ListenAndServe(*addr, r)
+	if err != nil {
+		log.Fatal("ListenAndServe:", err)
+	}
+}
