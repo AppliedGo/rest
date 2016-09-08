@@ -58,10 +58,10 @@ var (
 func show(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	k := p.ByName("key")
 	if k == "" {
-		fmt.Fprint(w, "Read: ", data)
+		fmt.Fprintf(w, "Read list: %v", data)
 		return
 	}
-	fmt.Fprintf(w, "Read: data[%s] = %s", k, data[k])
+	fmt.Fprintf(w, "Read entry: data[%s] = %s", k, data[k])
 }
 
 func update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -73,11 +73,11 @@ func update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 func main() {
 	flag.Parse()
-	data = make(map[string]string)
+	data = map[string]string{}
 	r := httprouter.New()
-	r.GET("/data/:key", show)
-	r.GET("/alldata", show)
-	r.PUT("/data/:key/:value", update)
+	r.GET("/entry/:key", show)
+	r.GET("/list", show)
+	r.PUT("/entry/:key/:value", update)
 	err := http.ListenAndServe(*addr, r)
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
