@@ -30,7 +30,7 @@ RESTful Web API's are ubiquitous. Time for a minimalistic, five-minutes video tu
 
 <!--more-->
 
-{{<  >}}
+{{< youtube E7wJ3_NZ3Mc >}}
 
 - - -
 *This is the transcript of the video.*
