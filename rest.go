@@ -15,12 +15,12 @@ Comments and code in this file are used for describing and explaining a particul
 -->
 
 +++
-title = "Gimme a REST."
+title = "Take a REST!"
 description = "The basics of a RESTful Web API, with a tiny REST server in Go."
 author = "Christoph Berger"
 email = "chris@appliedgo.net"
 date = "2016-09-22"
-publishdate = "2016-09-22"
+publishdate = "2016-09-13"
 domains = ["Internet and Web"]
 tags = ["REST", "Web", "API", "Video"]
 categories = ["Tutorial"]
@@ -122,6 +122,7 @@ import (
 	"log"
 	"net/http"
 
+	// This is `httprouter`. Ensure to install it first via `go get`.
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -136,6 +137,7 @@ var (
 	data map[string]string
 )
 
+// ## main
 func main() {
 	// The main function starts by parsing the commandline.
 	flag.Parse()
@@ -143,12 +145,12 @@ func main() {
 	// The data store an empty map.
 	data = map[string]string{}
 
-	// Now we can create a new httprouter instance...
+	// Now we can create a new `httprouter` instance...
 	r := httprouter.New()
 
 	// ...and add some routes.
-	// httprouter provides functions named after HTTP verbs.
-	// So to create a route for HTTP GET, we simply need to call the GET function
+	// `httprouter` provides functions named after HTTP verbs.
+	// So to create a route for HTTP GET, we simply need to call the `GET` function
 	// and pass a route and a handler function.
 	// The first route is `/entry` followed by a key variable denoted by a leading colon.
 	// The handler function is set to `show`.
@@ -175,12 +177,14 @@ func main() {
 	}
 }
 
+// ## The handler functions
+
 // Let's implement the show function now. Typically, handler functions receive two parameters:
 //
 // * A Response Writer, and
 // * a Request object.
 //
-// httprouter handlers receive a third parameter of type `Params`.
+// `httprouter` handlers receive a third parameter of type `Params`.
 // This way, the handler function can access the key and value variables
 // that have been extracted from the incoming URL.
 func show(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -234,6 +238,11 @@ curl localhost:8080/list
 curl localhost:8080/entry/first
 curl localhost:8080/entry/second
 ```
+
+As always, the code (with all comments) is available on GitHub: https://github.com/appliedgo/rest
+
+(No Playground link this time, as the Go Playground does not allow running Web servers.)
+
 
 That’s it for today, thanks for reading, and happy coding!
 */
