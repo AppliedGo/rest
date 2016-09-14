@@ -20,6 +20,7 @@ description = "The basics of a RESTful Web API, with a tiny REST server in Go."
 author = "Christoph Berger"
 email = "chris@appliedgo.net"
 date = "2016-09-22"
+draft = "true"
 publishdate = "2016-09-14"
 domains = ["Internet and Web"]
 tags = ["REST", "Web", "API", "Video"]
