@@ -19,8 +19,7 @@ title = "Take a REST!"
 description = "The basics of a RESTful Web API, with a tiny REST server in Go."
 author = "Christoph Berger"
 email = "chris@appliedgo.net"
-date = "2016-09-22"
-draft = "true"
+date = "2016-09-14"
 publishdate = "2016-09-14"
 domains = ["Internet and Web"]
 tags = ["REST", "Web", "API", "Video"]
@@ -31,7 +30,7 @@ RESTful Web API's are ubiquitous. Time for a minimalistic, five-minutes video tu
 
 <!--more-->
 
-{{< youtube E7wJ3_NZ3Mc >}}
+{{< youtube iVXaPD_Jbu0 >}}
 
 - - -
 *This is the transcript of the video.*
