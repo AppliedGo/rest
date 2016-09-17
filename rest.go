@@ -121,6 +121,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 
 	// This is `httprouter`. Ensure to install it first via `go get`.
 	"github.com/julienschmidt/httprouter"
@@ -207,15 +208,23 @@ func show(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 // The update function has the same signature as the show function.
 func update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
-	// Updates must pass two variables, a key and a value.
+	// An update operation must pass two variables, a key and a value. In the router, we named them `:key` and `:value`.
+	// CAVEAT EMPTOR: Handlers run concurrently, so we need to safeguard this operation against races. A Mutex locks access to k and v until both are updated.
+
+	m := &sync.Mutex{}
+	m.Lock()
+
+	// Fetch key and value from the URL parameters.
 	k := p.ByName("key")
 	v := p.ByName("value")
 
 	// We just need to either add or update the entry in the data map.
 	data[k] = v
 
+	m.Unlock()
+
 	// Finally, we print the result to the ResponseWriter.
-	fmt.Fprintf(w, "Updated: data[%s] = %s", k, data[k])
+	fmt.Fprintf(w, "Updated: data[%s] = %s", k, v)
 }
 
 /*
