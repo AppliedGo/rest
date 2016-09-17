@@ -111,6 +111,10 @@ Our code consists of standard Go, except for the HTTP router. The standard Serve
 
 ![httprouter features](httprouter.png)
 
+- - -
+**UPDATE:** The code has been kept simple for clarity. The original version as seen in the video does not even check for concurrent access to the data store. This is no problem when testing the code by sending `curl` calls one-by-one, but in real-world applications this can mess up your data. Hence the below code uses [sync.Mutex](https://golang.org/pkg/sync/#Mutex) to guard access to the global data store.
+- - -
+
 */
 
 // ## Imports and globals
@@ -190,7 +194,7 @@ func main() {
 // that have been extracted from the incoming URL.
 func show(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
-	// To access these parameters, we call the ByName method, passing the variable name.
+	// To access these parameters, we call the `ByName` method, passing the variable name that we chose when defining the route in `main`.
 	k := p.ByName("key")
 
 	// The show function serves two purposes.
@@ -208,7 +212,6 @@ func show(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 // The update function has the same signature as the show function.
 func update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
-	// An update operation must pass two variables, a key and a value. In the router, we named them `:key` and `:value`.
 	// CAVEAT EMPTOR: Handlers run concurrently, so we need to safeguard this operation against races. A Mutex locks access to k and v until both are updated.
 
 	m := &sync.Mutex{}
