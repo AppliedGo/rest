@@ -267,4 +267,8 @@ As always, the code (with all comments) is available on GitHub: https://github.c
 
 
 That’s it for today, thanks for reading, and happy coding!
+
+---
+
+Errata: 2017-03-05 Fixed: mutex logic for the `data` map.
 */
