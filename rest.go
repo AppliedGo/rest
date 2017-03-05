@@ -131,24 +131,33 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// We need a data store. For our purposes, a simple map
+// from string to string is completely sufficient.
+type store struct {
+	data map[string]string
+
+	// Handlers run concurrently, and maps are not thread-safe.
+	// This mutex is used to ensure that only one goroutine can update `data`.
+	m sync.RWMutex
+}
+
 var (
-	// First of all, we need a flag for setting the listening address.
+	// We need a flag for setting the listening address.
 	// We set the default to port 8080, which is a common HTTP port
 	// for servers with local-only access.
 	addr = flag.String("addr", ":8080", "http service address")
 
-	// Then we need a data store. For our purposes, a simple map
-	// from string to string is completely sufficient.
-	data map[string]string
+	// Now we create the data store.
+	s = store{
+		data: map[string]string{},
+		m:    sync.RWMutex{},
+	}
 )
 
 // ## main
 func main() {
 	// The main function starts by parsing the commandline.
 	flag.Parse()
-
-	// The data store an empty map.
-	data = map[string]string{}
 
 	// Now we can create a new `httprouter` instance...
 	r := httprouter.New()
@@ -200,34 +209,35 @@ func show(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	// The show function serves two purposes.
 	// If there is no key in the URL, it lists all entries of the data map.
 	if k == "" {
-		fmt.Fprintf(w, "Read list: %v", data)
+		// Lock the store for reading.
+		s.m.RLock()
+		fmt.Fprintf(w, "Read list: %v", s.data)
+		s.m.RUnlock()
 		return
 	}
+
 	// If a key is given, the show function returns the corresponding value.
 	// It does so by simply printing to the ResponseWriter parameter, which
 	// is sufficient for our purposes.
-	fmt.Fprintf(w, "Read entry: data[%s] = %s", k, data[k])
+	s.m.RLock()
+	fmt.Fprintf(w, "Read entry: s.data[%s] = %s", k, s.data[k])
+	s.m.RUnlock()
 }
 
 // The update function has the same signature as the show function.
 func update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
-	// CAVEAT EMPTOR: Handlers run concurrently, so we need to safeguard this operation against races. A Mutex locks access to k and v until both are updated.
-
-	m := &sync.Mutex{}
-	m.Lock()
 
 	// Fetch key and value from the URL parameters.
 	k := p.ByName("key")
 	v := p.ByName("value")
 
 	// We just need to either add or update the entry in the data map.
-	data[k] = v
-
-	m.Unlock()
+	s.m.Lock()
+	s.data[k] = v
+	s.m.Unlock()
 
 	// Finally, we print the result to the ResponseWriter.
-	fmt.Fprintf(w, "Updated: data[%s] = %s", k, v)
+	fmt.Fprintf(w, "Updated: s.data[%s] = %s", k, v)
 }
 
 /*
