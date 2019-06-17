@@ -21,9 +21,9 @@ author = "Christoph Berger"
 email = "chris@appliedgo.net"
 date = "2016-09-14"
 publishdate = "2016-09-14"
-domains = ["Internet and Web"]
+categories = ["Internet and Web"]
 tags = ["REST", "Web", "API", "Video"]
-categories = ["Tutorial"]
+articletypes = ["Tutorial"]
 +++
 
 RESTful Web API's are ubiquitous. Time for a minimalistic, five-minutes video tutorial about REST, RESTful API's, and buidling a REST server in Go.
